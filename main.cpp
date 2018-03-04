@@ -53,6 +53,7 @@ int main()
     a = aSum / pointCount;
     b = bSum / pointCount;
 
+    cout << "Before descent:" << endl;
     cout << "i:\tx:\ty:\tf(x):" << endl;
     for (int i = 0; i < pointCount; i++)
     {
@@ -93,11 +94,11 @@ int main()
 
         costNew = meanSquare(px, py, aNew, bNew, pointCount);
 
-        cout << stepIndex << ". New cost " << costNew << " in direction " << (int) direction % 4 << endl;
+//        cout << stepIndex << ". New cost " << costNew << " in direction " << (int) direction % 4 << endl;
 
         if (costNew == 0.0)
         {
-            cout << "Found max accuracy" << endl;
+//            cout << "Found max accuracy" << endl;
             break;
         } else if (costNew < costCurrent)
         {
@@ -106,7 +107,7 @@ int main()
             costCurrent = costNew;
             failedCount = 0;
 
-            cout << "Going a dist" << endl;
+//            cout << "Going a dist" << endl;
         } else
         {
             failedCount += 1;
@@ -116,12 +117,19 @@ int main()
             {
                 dist /= divisor;
                 divideCount += 1;
-                cout << "Setting dist to " << dist << endl;
+//                cout << "Setting dist to " << dist << endl;
             }
         }
     }
 
-    cout << "Ended" << endl;
+    cout << "After descent:" << endl;
+    cout << "i:\tx:\ty:\tf(x):" << endl;
+    for (int i = 0; i < pointCount; i++)
+    {
+        cout << i << ":\t" << px[i] << "\t" << py[i] << "\t" << critForce(px[i], a, b) << endl;
+    }
+
+    cout << "a: " << a << endl << "b: " << b << endl << "MSE: " << meanSquare(px, py, a, b, pointCount) << endl << endl;
 
 //    system("pause");
 
