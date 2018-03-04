@@ -8,6 +8,8 @@ double critForce(double x, double a, double b);
 
 void critParams(double x1, double y1, double x2, double y2, double &a, double &b);
 
+double meanSquare(double *px, double *py, double a, double b, int n);
+
 int main()
 {
     string filenameIn = "input.txt";
@@ -51,15 +53,77 @@ int main()
     a = aSum / pointCount;
     b = bSum / pointCount;
 
-    auto f = [a, b](double x) { return critForce(x, a, b); }; // Final function
-
     cout << "i:\tx:\ty:\tf(x):" << endl;
     for (int i = 0; i < pointCount; i++)
     {
-        cout << i << ":\t" << px[i] << "\t" << py[i] << "\t" << f(px[i]) << endl;
+        cout << i << ":\t" << px[i] << "\t" << py[i] << "\t" << critForce(px[i], a, b) << endl;
     }
 
-    system("pause");
+    cout << "a: " << a << endl << "b: " << b << endl << "MSE: " << meanSquare(px, py, a, b, pointCount) << endl << endl;
+
+    char direction = 0, failedCount = 0;
+    int stepCount = 300, divideCount = 0, maxDivides = 20;
+    double dist = 1, divisor = 2;
+    double aNew, bNew;
+    double costCurrent = meanSquare(px, py, a, b, pointCount), costNew;
+
+    for (int stepIndex = 0; divideCount < maxDivides; ++stepIndex)
+    {
+        switch (direction % 4)
+        {
+            case 0:
+            default:
+                aNew = a + dist;
+                bNew = b;
+                break;
+            case 1:
+                aNew = a;
+                bNew = b + dist;
+                break;
+            case 2:
+                aNew = a - dist;
+                bNew = b;
+                break;
+            case 3:
+                aNew = a;
+                bNew = b - dist;
+                break;
+        }
+
+
+        costNew = meanSquare(px, py, aNew, bNew, pointCount);
+
+        cout << stepIndex << ". New cost " << costNew << " in direction " << (int) direction % 4 << endl;
+
+        if (costNew == 0.0)
+        {
+            cout << "Found max accuracy" << endl;
+            break;
+        } else if (costNew < costCurrent)
+        {
+            a = aNew;
+            b = bNew;
+            costCurrent = costNew;
+            failedCount = 0;
+
+            cout << "Going a dist" << endl;
+        } else
+        {
+            failedCount += 1;
+            direction += 1;
+
+            if (failedCount >= 4)
+            {
+                dist /= divisor;
+                divideCount += 1;
+                cout << "Setting dist to " << dist << endl;
+            }
+        }
+    }
+
+    cout << "Ended" << endl;
+
+//    system("pause");
 
     free(py);
     free(px);
@@ -80,4 +144,18 @@ void critParams(double x1, double y1, double x2, double y2, double &a, double &b
 {
     a = (y1 * y2 * (x2 - x1)) / (y1 - y2);
     b = (y1 * x1 - y2 * x2) / (y1 - y2);
+}
+
+double meanSquare(double *const px, double *const py, double a, double b, int n)
+{
+    double sum = 0.0;
+    double diff;
+
+    for (int i = 0; i < n; ++i)
+    {
+        diff = critForce(px[i], a, b) - py[i];
+        sum += diff * diff;
+    }
+
+    return sum;
 }
