@@ -1,11 +1,12 @@
 #include <iostream>
 #include <fstream>
-#include <float.h>
+#include <cfloat>
 
 using namespace std;
 
 double critForce(double x, double a, double b);
-void critParams(double x1, double y1, double x2, double y2, double& a, double& b);
+
+void critParams(double x1, double y1, double x2, double y2, double &a, double &b);
 
 int main()
 {
@@ -24,8 +25,8 @@ int main()
     int pointCount;
     fin >> pointCount;
 
-    double* px = (double*)malloc(pointCount * sizeof(double)); // points X coordinate
-    double* py = (double*)malloc(pointCount * sizeof(double)); // points Y coordinate
+    auto *px = (double *) malloc(pointCount * sizeof(double)); ///< points X coordinate
+    auto *py = (double *) malloc(pointCount * sizeof(double)); ///< points Y coordinate
 
     for (int i = 0; i < pointCount; i++)
     {
@@ -66,7 +67,7 @@ int main()
     return 0;
 }
 
-///<summary>Hyperbolic function with asymptotes: y=0; x=b</summary>
+/// Hyperbolic function with asymptotes: y=0; x=b
 double critForce(double x, double a, double b)
 {
     if (x == b) return DBL_MAX; // Prevent 0 division, make cost function high
@@ -74,9 +75,9 @@ double critForce(double x, double a, double b)
     return a / (x - b);
 }
 
-///<summary>Returns parameters for critForce given two points</summary>
-void critParams(double x1, double y1, double x2, double y2, double & a, double & b)
+/// Returns parameters for critForce given two points
+void critParams(double x1, double y1, double x2, double y2, double &a, double &b)
 {
-    a = (y1*y2*(x2 - x1)) / (y1 - y2);
-    b = (y1*x1 - y2 * x2) / (y1 - y2);
+    a = (y1 * y2 * (x2 - x1)) / (y1 - y2);
+    b = (y1 * x1 - y2 * x2) / (y1 - y2);
 }
